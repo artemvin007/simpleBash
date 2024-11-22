@@ -48,46 +48,39 @@ void flag_enabler(char* flag_str, struct flags* f) {
   }
 }
 
-void print_char(int c, struct flags* f, int* prev_c, bool* back_n_was_write,
+void print_char(int c, struct flags* f, int* prev_c, int* empty_str_count,
                 int* str_counter) {
-  bool need_to_write = true;
   if (f->s && *prev_c == '\n' && c == '\n') {
-    if (*back_n_was_write) {
-      need_to_write = false;
-    } else {
-      *back_n_was_write = true;
+    *empty_str_count += 1;
+    if (*empty_str_count > 1) {
+      return;
     }
+  } else {
+    *empty_str_count = 0;
   }
-  if (f->n && *prev_c == '\n' && need_to_write) {
-    printf("%6d	", *str_counter);
-    *(str_counter) += 1;
+
+  if (*prev_c == '\n' && ((f->b && c != '\n') || f->n)) {
+    printf("%6d\t", *str_counter);
+    *str_counter += 1;
   }
-  if (f->b && *prev_c == '\n' && c != '\n') {
-    printf("%6d	", *str_counter);
-    *(str_counter) += 1;
+
+  if (f->e && c == '\n') {
+    printf("$");
   }
+
   if (f->t && c == 9) {
-    printf("^I");
-    need_to_write = false;
+    printf("^");
+    c = 'I';
   }
   if (f->v && c != '\n' && c != '\t' && c < 32) {
     printf("^");
     c += 64;
-  } else if (c == 127) {
+  } else if (f->v && c == 127) {
     printf("^");
     c = '?';
   }
 
-  if (need_to_write) {
-    if (f->e && c == '\n') {
-      printf("$");
-    }
-
-    printf("%c", c);
-    if (c != '\n') {
-      *back_n_was_write = false;
-    }
-  }
+  printf("%c", c);
 }
 
 void print_file(char* filename, struct flags* f) {
@@ -96,13 +89,12 @@ void print_file(char* filename, struct flags* f) {
   if ((fp = fopen(filename, "r")) != NULL) {
     int prev_c = '\n';
     int c = fgetc(fp);
-
-    bool back_n_was_write = false;
+    int empty_str_count = 0;
     if (f->b) {
       f->n = false;
     }
     while (c != EOF) {
-      print_char(c, f, &prev_c, &back_n_was_write, &str_counter);
+      print_char(c, f, &prev_c, &empty_str_count, &str_counter);
       prev_c = c;
       c = fgetc(fp);
     }

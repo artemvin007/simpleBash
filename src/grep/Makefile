@@ -4,7 +4,10 @@ s21_grep:
 	$(CC) s21_grep.c s21_grep.h -o $@
 
 tests: s21_grep
-	sh grep_test.sh
+	echo "--------func test--------"
+	sh test_grep/test_func_grep.sh
+	echo "--------leak test--------"
+	sh test_grep/test_leak_grep.sh
 
 clean:
 	rm s21_grep

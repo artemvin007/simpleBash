@@ -4,10 +4,13 @@ s21_cat:
 	$(CC) s21_cat.c s21_cat.h -o $@
 
 tests: s21_cat
-	sh test_cat.sh
+	echo "-------func test--------"
+	sh test_cat/test_func_cat.sh
+	echo "-------leak test--------"
+	sh test_cat/test_leak_cat.sh
 
 clean:
-	rm s21_cat log.txt
+	rm s21_cat 
 
 rebuild: clean s21_cat
 
