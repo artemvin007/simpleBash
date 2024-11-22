@@ -1,6 +1,6 @@
 # Simple Bash Utils
 
-Разработка утилит Bash по работе с текстом: cat, grep.
+Разработка утилит Bash для MacOS по работе с текстом: cat, grep.
 
 `cat [OPTION] [FILE]...`
 
